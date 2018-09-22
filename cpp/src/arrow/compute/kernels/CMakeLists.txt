@@ -19,4 +19,5 @@ install(FILES
   boolean.h
   cast.h
   hash.h
+  match.h
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/arrow/compute/kernels")

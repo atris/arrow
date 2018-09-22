@@ -59,6 +59,7 @@ if (ARROW_COMPUTE)
     compute/kernels/boolean.cc
     compute/kernels/cast.cc
     compute/kernels/hash.cc
+    compute/kernels/match.cc
     compute/kernels/util-internal.cc
   )
 endif()

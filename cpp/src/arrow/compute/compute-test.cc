@@ -43,6 +43,7 @@
 #include "arrow/compute/kernels/boolean.h"
 #include "arrow/compute/kernels/cast.h"
 #include "arrow/compute/kernels/hash.h"
+#include "arrow/compute/kernels/match.h"
 #include "arrow/compute/kernels/util-internal.h"
 
 using std::shared_ptr;
@@ -1056,6 +1057,8 @@ void CheckDictEncode(FunctionContext* ctx, const shared_ptr<DataType>& type,
 
 class TestHashKernel : public ComputeFixture, public TestBase {};
 
+class TestMatchArrays : public ComputeFixture, public TestBase {};
+
 template <typename Type>
 class TestHashKernelPrimitive : public ComputeFixture, public TestBase {};
 
@@ -1425,6 +1428,29 @@ TEST_F(TestBooleanKernel, Xor) {
   vector<bool> values3 = {false, true, true, false, false, true};
   vector<bool> values3_nulls = {true, false, false, false, true, false};
   TestBinaryKernel(Xor, values1, values2, values3, values3_nulls);
+}
+
+TEST_F(TestMatchArrays, MatchArrays) {
+  auto out_type = int64();
+
+  vector<std::string> values1 = {"foo", "bar", "baz"};
+  auto values1_array = _MakeArray<StringType, std::string>(utf8(), values1, {});
+  vector<std::string> values2 = {"foo", "bar", "baz"};
+  auto values2_array = _MakeArray<StringType, std::string>(utf8(), values1, {});
+  vector<int64_t> result_values = {0, 1, 2};
+  auto result_expected_array = _MakeArray<Int64Type, int64_t>(out_type, result_values, {});
+
+  Datum result;
+  ASSERT_OK(MatchArrays(&this->ctx_, Datum(values1_array), Datum(values2_array), &result));
+
+  std::shared_ptr<Array> result_array = result.make_array();
+
+  //TODO: Remove the below print lines
+  std::cout<<*result_array.get()<<"\n";
+
+  std::cout<<*result_expected_array.get()<<"\n";
+
+  ASSERT_TRUE(result_array->Equals(result_expected_array));
 }
 
 class TestInvokeBinaryKernel : public ComputeFixture, public TestBase {};
