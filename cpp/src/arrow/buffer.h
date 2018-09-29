@@ -124,6 +124,20 @@ class ARROW_EXPORT Buffer {
   /// using the default memory pool
   static Status FromString(const std::string& data, std::shared_ptr<Buffer>* out);
 
+  /// \brief Construct a new buffer that moves owned memory from a std::string
+  ///
+  /// \param[in] data a std::string object
+  /// \param[in] pool a memory pool
+  /// \param[out] out the created buffer
+  ///
+  /// \return Status message
+  static Status StlStringBuffer(const std::string& data, MemoryPool* pool,
+                                std::shared_ptr<Buffer>* out);
+
+  /// \brief Construct a new buffer that moves owned memory from
+  /// std::string using the default memory pool
+  static Status StlStringBuffer(const std::string& data, std::shared_ptr<Buffer>* out);
+
   /// \brief Create buffer referencing typed memory with some length without
   /// copying
   /// \param[in] data the typed memory as C array

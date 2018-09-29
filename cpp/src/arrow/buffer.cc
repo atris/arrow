@@ -75,6 +75,20 @@ std::string Buffer::ToString() const {
   return std::string(reinterpret_cast<const char*>(data_), static_cast<size_t>(size_));
 }
 
+Status Buffer::StlStringBuffer(const std::string& data, MemoryPool* pool,
+                               std::shared_ptr<Buffer>* out) {
+  auto size = static_cast<int64_t>(data.size());
+  RETURN_NOT_OK(AllocateBuffer(pool, size, out));
+  (*out)->data_ = reinterpret_cast<const uint8_t*>(std::move(data.c_str()));
+
+  return Status::OK();
+}
+
+Status Buffer::StlStringBuffer(const std::string& data,
+                               std::shared_ptr<Buffer>* out) {
+  return StlStringBuffer(data, default_memory_pool(), out);
+}
+
 void Buffer::CheckMutable() const { DCHECK(is_mutable()) << "buffer not mutable"; }
 
 /// A Buffer whose lifetime is tied to a particular MemoryPool
